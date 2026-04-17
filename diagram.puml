@@ -1,0 +1,24 @@
+@startuml Electricity Cost Analytics
+!theme plain
+skinparam componentStyle rectangle
+
+actor "Operations\nManager" as user
+participant "FastAPI\nServices" as api
+participant "Analytics\nEngine" as analytics
+database "Time-Series\nDB\n(InfluxDB/Timestream)" as tsdb
+participant "Pandas\nCalculations" as pandas
+actor "BI Tools\n(Grafana/PowerBI)" as bi
+
+user -> api: GET /costs?facility=X&period=daily
+api -> tsdb: Query metering data
+tsdb --> api: Raw measurements
+api -> analytics: Compute cost metrics
+analytics -> pandas: Apply tariffs &\nstatistical analysis
+pandas --> analytics: Cost aggregations &\ntrend data
+analytics --> api: Structured results
+api --> user: JSON response
+
+bi -> api: GET /stats?meter=Y&window=7d
+api --> bi: Statistical summaries
+
+@enduml
