@@ -1,24 +1,49 @@
 @startuml Electricity Cost Analytics
-!theme plain
+!theme sketchy-outline
 skinparam componentStyle rectangle
 
 actor "Operations\nManager" as user
-participant "FastAPI\nServices" as api
-participant "Analytics\nEngine" as analytics
-database "Time-Series\nDB\n(InfluxDB/Timestream)" as tsdb
-participant "Pandas\nCalculations" as pandas
+participant "FastAPI\nRouter" as api
+participant "Cost\nCalculator" as cost
+participant "Statistics\nModule" as stats
+participant "Trend\nAnalyzer" as trend
+database "InfluxDB/\nTimestream" as tsdb
+participant "Flux Query\nLibrary" as flux
 actor "BI Tools\n(Grafana/PowerBI)" as bi
 
+== Cost Analytics ==
+
 user -> api: GET /costs?facility=X&period=daily
-api -> tsdb: Query metering data
+api -> tsdb: Query metering data\n(via Repository)
 tsdb --> api: Raw measurements
-api -> analytics: Compute cost metrics
-analytics -> pandas: Apply tariffs &\nstatistical analysis
-pandas --> analytics: Cost aggregations &\ntrend data
-analytics --> api: Structured results
+api -> cost: Compute cost metrics
+cost -> cost: Apply tariffs &\ntime-of-use pricing
+cost --> api: Per-period cost breakdown
 api --> user: JSON response
 
-bi -> api: GET /stats?meter=Y&window=7d
-api --> bi: Statistical summaries
+== Statistical Summaries ==
+
+user -> api: GET /stats?meter=Y&window=7d
+api -> stats: Compute statistics
+stats -> stats: Pandas aggregations\n(mean, peak, stddev)
+stats --> api: Statistical summary
+api --> user: JSON response
+
+== Trend Analysis ==
+
+user -> api: GET /trends?facility=X&range=30d
+api -> trend: Analyze trends
+trend -> trend: Rolling averages &\nanomaly detection
+trend --> api: Trend data & forecasts
+api --> user: JSON response
+
+== BI Integration ==
+
+bi -> api: GET /analytics\n(dashboard queries)
+api -> flux: Build Flux queries
+flux -> tsdb: Optimized time-series queries
+tsdb --> flux: Aggregated results
+flux --> api: Structured data
+api --> bi: JSON response
 
 @enduml

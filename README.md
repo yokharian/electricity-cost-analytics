@@ -1,5 +1,7 @@
 # Electricity Cost Analytics
 
+![Architecture](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/yokharian/electricity-cost-analytics/master/diagram.puml)
+
 Backend microservices for statistical analysis of electricity costs from industrial IoT sensor data.
 
 ## Tech Stack
