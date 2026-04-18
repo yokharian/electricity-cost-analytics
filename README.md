@@ -29,9 +29,6 @@ Backend microservices for statistical analysis of electricity costs from industr
 - Repository pattern for swappable time-series backends
 - Docker Compose for local development
 
-## Architecture
-
-See [diagram.puml](./diagram.puml) for system architecture.
 
 ## References
 
